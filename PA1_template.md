@@ -11,17 +11,48 @@ Unzip the **activity.zip** file the repository and then read the **activity.csv*
 
 
 ```r
-unzip("activity.zip")
-activity <- read.csv("activity.csv")
+unzip("./activity.zip")
+activity <- read.csv("./activity.csv")
+head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
+```r
+dim(activity)
+```
+
+```
+## [1] 17568     3
+```
+
+```r
+str(activity)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : chr  "2012-10-01" "2012-10-01" "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
 
 ## What is mean total number of steps taken per day?
-1. Calculate the total number of steps taken per day.
+1. Calculate the total number of steps taken per day. Note: with na.rm is TRUE in a tapply function, all missing data will be replaced by 0.
 
 ```r
 total_steps <- with(activity, tapply(steps, date, sum, na.rm = TRUE))
 ```
+
 2. Make a histogram of the total number of steps taken each day.
 
 ```r
@@ -30,6 +61,7 @@ hist(total_steps, col = "skyblue", xlab = "Total of steps per date",
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 3. Calculate and report the mean and median of the total number of steps taken per day.
 
 ```r
@@ -70,6 +102,7 @@ names(avg_interval[avg_interval == max(avg_interval)])
 ```
 ## [1] "835"
 ```
+The value of the 5 min interval we get, which contains the maximun number of steps match exactly what we see in the plot.
 
 ## Imputing missing values
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with \color{red}{\verb|NA|}NAs).
@@ -82,7 +115,7 @@ sum(is.na(activity$steps))
 ## [1] 2304
 ```
 
-2. Devise a strategy for filling in all of the missing values in the dataset. For each 5-minute interval with NA steps, the strategy is using the mean for that 5-minute interval across all the days.  
+2. Devise a strategy for filling in all of the missing values in the dataset. For each 5-minute interval with NA steps, the strategy we are using here is replacing all each missing value with the mean for that 5-minute interval across all the days.  
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
@@ -94,7 +127,9 @@ for (i in na_list){
   new_activity$steps[i] <- avg_interval[temp]
 }
 ```
+
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
 
 ```r
 new_total_steps <- with(new_activity, tapply(steps, date, sum))
@@ -129,7 +164,7 @@ median(new_total_steps)
 ## [1] 10766.19
 ```
 
-The impact of imputing missing data on the estimates of the total daily number of steps is to normalize the data distribution.
+The impact of imputing missing data on the estimates of the total daily number of steps is to normalize the data distribution. As we can see, in this case, the values of the mean and the median are equal, which is sign of a normal distribution.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
